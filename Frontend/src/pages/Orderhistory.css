@@ -1,0 +1,163 @@
+ .order-history-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  margin-top: 80px;
+}
+
+.order-history-title {
+  text-align: center;
+  color: #033a1d;
+  margin-bottom: 30px;
+}
+
+.loading-container,
+.error-container,
+.no-orders {
+  text-align: center;
+  padding: 50px 20px;
+}
+
+.error-container button {
+  background: #033a1d;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.no-orders {
+  text-align: center;
+  padding: 50px 20px;
+}
+
+.shop-now-btn {
+  background: #033a1d;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 15px;
+}
+
+.orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.order-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.order-info h3 {
+  margin: 0;
+  color: #033a1d;
+}
+
+.order-date {
+  color: #666;
+  font-size: 14px;
+}
+
+.status-badge {
+  color: white;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.order-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.order-items-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.item-preview {
+  background: #f5f5f5;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.more-items {
+  color: #666;
+  font-size: 14px;
+}
+
+.order-totals {
+  font-weight: bold;
+  color: #033a1d;
+  font-size: 18px;
+}
+
+.order-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 15px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.shipping-address {
+  color: #666;
+  font-size: 14px;
+}
+
+.view-details-btn {
+  background: #033a1d;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.view-details-btn:hover {
+  background: #022812;
+}
+
+@media (max-width: 768px) {
+  .order-history-container {
+    padding: 10px;
+    margin-top: 60px;
+  }
+
+  .order-header,
+  .order-details,
+  .order-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .order-items-preview {
+    margin-bottom: 10px;
+  }
+}

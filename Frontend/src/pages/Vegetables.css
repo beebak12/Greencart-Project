@@ -1,0 +1,197 @@
+/* vegetables.css */
+/* Category buttons */
+.category-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin: 30px 0;
+  flex-wrap: wrap;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #ffffff;
+  padding: 10px 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.category-btn {
+  background-color: #2e7d32;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+  font-weight: 600;
+}
+
+.category-btn:hover {
+  background-color: #1b5e20;
+  transform: translateY(-2px);
+}
+.vegetables-container {
+  padding: 10px;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+}
+
+.vegetables-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+ 
+.vegetables-title {
+  font-size: 2.5rem;
+  color: #2c662d;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.vegetables-subtitle {
+  font-size: 1.2rem;
+  color: #4a8c4a;
+  margin-bottom: 30px;
+}
+
+.vegetables-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+  padding: 10px;
+  width: 100%;
+  margin: 0;
+}
+
+.vegetables-card {
+  background: white;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid #f0f0f0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.vegetables-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.vegetables-image-container {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  background-color: #f8f8f8;
+}
+
+.vegetable-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.vegetables-card:hover .vegetable-image {
+  transform: scale(1.05);
+}
+
+.vegetable-info {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.vegetable-name {
+  font-size: 1.3rem;
+  color: #2c662d;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.vegetable-description {
+  color: #666;
+  margin-bottom: 10px;
+  line-height: 1.4;
+}
+
+.vegetable-farmer {
+  color: #888;
+  font-size: 0.9rem;
+  margin-bottom: 15px;
+  font-style: italic;
+}
+
+.vegetable-price {
+  font-size: 1.4rem;
+  color: #e74c3c;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.add-to-cart-btn {
+  width: 100%;
+  padding: 12px 20px;
+  background-color: #4a8c4a;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: auto;
+}
+
+.add-to-cart-btn:hover {
+  background-color: #3a6c3a;
+}
+
+/* No results message */
+.no-results {
+  text-align: center;
+  padding: 40px 20px;
+  color: #666;
+  font-size: 1.1rem;
+}
+
+/* Responsive design */
+@media (max-width: 1200px) {
+  .vegetables-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    padding: 8px;
+  }
+}
+
+@media (max-width: 768px) {
+  .vegetables-container {
+    padding: 8px;
+  }
+  
+  .vegetables-title {
+    font-size: 2rem;
+  }
+  
+  .vegetables-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    padding: 5px;
+  }
+}
+
+@media (max-width: 480px) {
+  .vegetables-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    padding: 3px;
+  }
+  
+  .vegetables-container {
+    padding: 5px;
+  }
+}

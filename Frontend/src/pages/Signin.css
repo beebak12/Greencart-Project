@@ -1,0 +1,233 @@
+.login-container {
+  display: flex;
+  margin-top: 100px;
+  justify-content: space-between; /* spread left & right */
+  align-items: flex-start;        /* align from the top */
+  gap: 30px;                      /* space between the two boxes */
+  min-height: 80vh;
+  padding: 40px 20px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+/* Login box on the left */
+.login-box {
+  flex: 0 0 490px;                        /* take available space */
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  background: #fff;
+  text-align: center;
+  margin-left: 130px; /* Push from left */
+}
+
+/* Farmer box on the right */
+.loginfarmer-box {
+   flex: 0 0 400px; /* Increased width for right box */
+  padding: 40px; /* Increased padding */
+  border-radius: 20px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  background: white;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 150px;
+  margin-right: 280px; /* Push further to the right */
+  margin-left: auto; /* Push to the right side */
+}
+
+.loginfarmer-box h2 {
+  color: #2c662d;
+  font-size: 2rem; /* Increased from 1.5rem */
+  margin-bottom: 25px; /* Increased margin */
+  font-weight: bold;
+}
+
+.farmer-btn {
+    width: 100%;
+  padding: 16px; /* Increased padding */
+  background: #24d54e;
+  color: #290404;
+  font-size: 18px; /* Increased font size */
+  font-weight: bold;
+  border: none;
+  border-radius: 8px; /* Slightly larger radius */
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 10px;
+}
+
+.farmer-btn:hover {
+  background-color: #1b5e20;
+   transform: translateY(-3px); /* Add hover effect */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+
+
+.welcome-text {
+  color: #2c662d;
+  font-size: 2rem;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.subtitle {
+  color: #666;
+  margin-bottom: 30px;
+  font-size: 1.1rem;
+}
+
+/* Inputs */
+.login-form .input-group {
+  margin-bottom: 15px;
+  position: relative;
+}
+
+.login-form input {
+  width: 100%;
+  padding: 12px 15px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  outline: none;
+  font-size: 14px;
+}
+
+/* Password toggle */
+.password-group {
+  position: relative;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+/* Forgot password */
+.forgot {
+  text-align: right;
+  margin-bottom: 15px;
+}
+
+.forgot a {
+  font-size: 0.8rem;
+  text-decoration: none;
+  color: #333;
+}
+
+/* Login button */
+.login-btn {
+  width: 100%;
+  padding: 12px;
+  background: #000;
+  color: #fff;
+  font-size: 15px;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* Divider */
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 20px 0;
+}
+
+.divider span {
+  flex: 1;
+  border-bottom: 1px solid #bbb;
+  margin: 0 10px;
+  font-size: 0.8rem;
+  color: #666;
+}
+
+/* Social buttons */
+.social-login {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.social-login button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.google-btn {
+  background: #fff;
+  border: 1px solid #ccc;
+}
+
+.facebook-btn {
+  background: #fff;
+  border: 1px solid #ccc;
+}
+
+/* Sign up */
+.signup-text {
+  margin-top: 20px;
+  font-size: 0.9rem;
+}
+
+.signup-text a {
+  font-weight: bold;
+  text-decoration: none;
+  color: #000;
+}
+
+.signup-text a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .login-container {
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+  }
+  
+  .login-box,
+  .loginfarmer-box {
+    flex: none;
+    width: 100%;
+    max-width: 450px;
+    margin: 0 0 20px 0 !important; /* Reset margins on mobile */
+  }
+}
+
+@media (max-width: 400px) {
+  .login-box,
+  .loginfarmer-box {
+    width: 90%;
+    padding: 20px;
+  }
+  
+  .social-login button {
+    width: 100%;
+  }
+  
+  .loginfarmer-box h2 {
+    font-size: 1.5rem; /* Slightly smaller on mobile */
+  }
+  
+  .farmer-btn {
+    font-size: 16px; /* Slightly smaller on mobile */
+    padding: 14px;
+  }
+}

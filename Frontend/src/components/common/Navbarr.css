@@ -1,0 +1,643 @@
+/* Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --primary-green: #10b981;
+  --secondary-green: #34d399;
+  --light-green: #ecfdf5;
+  --dark-green: #047857;
+  --white: #033a1d;
+  --light-gray: #f8fafc;
+  --medium-gray: #e2e8f0;
+  --dark-gray: #79e82a;
+  --text-dark: #1e293b;
+  --shadow-light: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-medium: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --shadow-large: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--light-gray);
+  transition: margin-left 0.3s ease;
+}
+
+/* Hamburger Menu Button - Always Visible */
+.nav-toggle {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 50px;
+  height: 50px;
+  background: var(--primary-green);
+  border-radius: 12px;
+  cursor: pointer;
+  position: fixed;
+  top: 25px;
+  left: 25px;
+  z-index: 1002;
+  box-shadow: var(--shadow-light);
+  transition: var(--transition);
+  border: none;
+}
+
+.nav-toggle:hover {
+  background: var(--dark-green);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-medium);
+}
+
+.nav-toggle.active {
+  background: var(--dark-green);
+  left: 285px; /* Adjusted for sidebar width */
+}
+
+.bar {
+  width: 24px;
+  height: 2px;
+  background: var(--white);
+  margin: 2px 0;
+  transition: var(--transition);
+  border-radius: 2px;
+}
+
+.nav-toggle.active .bar:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.nav-toggle.active .bar:nth-child(2) {
+  opacity: 0;
+}
+
+.nav-toggle.active .bar:nth-child(3) {
+  transform: rotate(-45deg) translate(7px, -6px);
+}
+
+/* Mobile Backdrop */
+.mobile-backdrop {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 998;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.mobile-backdrop.active {
+  display: block;
+  opacity: 1;
+}
+
+/* Top Header Bar */
+.top-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: var(--white);
+  border-bottom: 1px solid var(--medium-gray);
+  z-index: 997;
+  transition: var(--transition);
+  box-shadow: var(--shadow-light);
+  display: flex;
+  align-items: center;
+}
+
+.top-header.scrolled {
+  box-shadow: var(--shadow-medium);
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 2rem;
+  margin-left: 90px; /* Always account for hamburger button space */
+  transition: margin-left 0.3s ease;
+}
+
+/* Header Logo in Top Bar */
+.header-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 45px;
+  height: 45px;
+  background: linear-gradient(135deg, var(--primary-green), var(--secondary-green));
+  border-radius: 12px;
+  padding: 8px;
+}
+
+.logo-text-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.logo-text {
+  font-size: 1.75rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--primary-green), var(--dark-green));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+}
+
+.logo-subtitle {
+  font-size: 1.5rem;
+  color: var(--dark-gray);
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+/* Header Search */
+.header-search-container {
+  flex: 1;
+  max-width: 500px;
+  margin: 0 2rem;
+  border-radius: 10px;
+}
+
+.search-form {
+  width: 100%;
+}
+
+.search-input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: var(--white);
+  border: 2px solid var(--medium-gray);
+  border-radius: 12px;
+  padding: .75rem 0.2rem;
+  transition: var(--transition);
+  max-width: 400px;
+}
+
+.search-input-group:focus-within {
+  border-color: var(--primary-green);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.search-icon {
+  display: flex;
+  align-items: center;
+  margin-right: 0.75rem;
+  color: var(--dark-gray);
+}
+
+.search-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 1rem;
+  color: var(--text-dark);
+}
+
+.search-input::placeholder {
+  color: var(--dark-gray);
+}
+
+.search-clear {
+  background: none;
+  border: none;
+  color: var(--dark-gray);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: var(--transition);
+}
+
+.search-clear:hover {
+  background: var(--light-gray);
+  color: var(--text-dark);
+}
+
+/* Header Actions */
+.header-actions {
+  display: flex;
+  align-items: center;
+}
+
+.logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: var(--transition);
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.logout-btn:hover {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(239, 68, 68, 0.3);
+}
+
+/* Side Navigation Bar */
+.navbar {
+  position: fixed;
+  left: -320px; /* Hidden by default on all screens */
+  top: 0;
+  width: 320px;
+  height: 100vh;
+  background: linear-gradient(180deg, var(--white) 0%, var(--light-gray) 100%);
+  border-right: 1px solid var(--medium-gray);
+  padding: 2rem 0;
+  display: flex;
+  flex-direction: column;
+  z-index: 999;
+  box-shadow: var(--shadow-large);
+  overflow-y: auto;
+  transition: left 0.3s ease;
+}
+
+.navbar.active {
+  left: 0; /* Slide in when active on all screens */
+}
+
+.nav-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 0 1.5rem;
+}
+
+/* Sidebar Logo Section */
+.nav-logo {
+  display: flex;
+  align-items: center;
+  margin-bottom: 3rem;
+  padding: 1.5rem;
+  background: var(--white);
+  border-radius: 20px;
+  box-shadow: var(--shadow-light);
+  border: 1px solid var(--medium-gray);
+  transition: var(--transition);
+}
+
+.nav-logo:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-medium);
+}
+
+.nav-logo .logo-icon {
+  width: 60px;
+  height: 60px;
+  margin-right: 15px;
+}
+
+.nav-logo .logo-text {
+  font-size: 2.25rem;
+}
+
+.nav-logo .logo-subtitle {
+  font-size: 0.9rem;
+}
+
+/* Navigation Menu */
+.nav-menu {
+  list-style: none;
+  background: #1b781e;
+  
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.nav-item {
+  margin-bottom: 0.25rem;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  text-decoration: none;
+  color: var(--text-dark);
+  border-radius: 12px;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+  background: rgb(156, 205, 8);
+  border: 1px solid var(--medium-gray);
+  width: 100%;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+.nav-link:hover {
+  background: var(--light-green);
+  transform: translateX(5px);
+  color: var(--dark-green);
+  border-color: var(--primary-green);
+}
+
+
+
+/* Login Button in Sidebar */
+.login-item .nav-link {
+  background: linear-gradient(135deg, var(--primary-green), var(--secondary-green));
+  color: var(--white);
+  border: none;
+  margin-top: auto;
+}
+
+.login-item .nav-link:hover {
+  background: linear-gradient(135deg, var(--dark-green), var(--primary-green));
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-medium);
+}
+
+/* Cart count styling */
+.cart-count {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  background: #ef4444;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* Icon and Text Styles */
+.nav-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  margin-right: 12px;
+  transition: var(--transition);
+}
+
+.nav-link:hover .nav-icon {
+  transform: scale(1.1);
+}
+
+.nav-text {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+/* Main content area */
+.main-content {
+  margin-top: 80px;
+  padding: 2rem;
+  min-height: calc(100vh - 80px);
+  background: var(--light-gray);
+  transition: margin-left 0.3s ease;
+}
+
+/* When sidebar is active, shift content */
+.navbar.active ~ .main-content,
+.navbar.active ~ .top-header .header-content {
+  margin-left: 320px;
+}
+
+/* Custom scrollbar for sidebar */
+.navbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.navbar::-webkit-scrollbar-track {
+  background: var(--light-gray);
+}
+
+.navbar::-webkit-scrollbar-thumb {
+  background: var(--primary-green);
+  border-radius: 10px;
+}
+
+.navbar::-webkit-scrollbar-thumb:hover {
+  background: var(--dark-green);
+}
+
+/* Responsive Design - Hamburger works on ALL screen sizes */
+@media screen and (min-width: 1201px) {
+  /* Large Desktop - Sidebar can be toggled */
+  .navbar {
+    left: -320px;
+  }
+  
+  .navbar.active {
+    left: 0;
+  }
+  
+  .nav-toggle.active {
+    left: 285px;
+  }
+  
+  /* Shift content when sidebar is open */
+  .navbar.active ~ .main-content,
+  .navbar.active ~ .top-header .header-content {
+    margin-left: 320px;
+  }
+}
+
+@media screen and (max-width: 1200px) {
+  /* Desktop */
+  .navbar {
+    width: 300px;
+  }
+  
+  .nav-toggle.active {
+    left: 285px;
+  }
+  
+  .navbar.active ~ .main-content,
+  .navbar.active ~ .top-header .header-content {
+    margin-left: 300px;
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  /* Tablet */
+  .navbar {
+    width: 280px;
+  }
+  
+  .nav-toggle.active {
+    left: 265px;
+  }
+  
+  .header-content {
+    margin-left: 80px;
+    padding: 0 1.5rem;
+  }
+  
+  .navbar.active ~ .main-content,
+  .navbar.active ~ .top-header .header-content {
+    margin-left: 280px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  /* Mobile */
+  .navbar {
+    width: 100%;
+    left: -100%;
+  }
+  
+  .navbar.active {
+    left: 0;
+  }
+  
+  .nav-toggle.active {
+    left: calc(100% - 75px);
+  }
+  
+  .header-content {
+    margin-left: 70px;
+    padding: 0 1rem;
+  }
+  
+  .header-logo .logo-text {
+    font-size: 1.5rem;
+  }
+  
+  .header-logo .logo-icon {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .header-search-container {
+    margin: 0 1rem;
+  }
+  
+  .search-input-group {
+    max-width: 200px;
+  }
+  
+  .logout-btn span {
+    display: none;
+  }
+  
+  .logout-btn {
+    padding: 10px;
+  }
+  
+  .mobile-backdrop.active {
+    display: block;
+  }
+  
+  /* On mobile, content doesn't shift - sidebar overlays */
+  .navbar.active ~ .main-content,
+  .navbar.active ~ .top-header .header-content {
+    margin-left: 0;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  /* Small Mobile */
+  .header-logo .logo-subtitle {
+    display: none;
+  }
+  
+  .header-search-container {
+    margin: 0 0.5rem;
+  }
+  
+  .search-input-group {
+    max-width: 150px;
+  }
+  
+  .logo-text {
+    font-size: 1.25rem;
+  }
+  
+  .header-content {
+    margin-left: 60px;
+  }
+  
+  .nav-toggle {
+    width: 45px;
+    height: 45px;
+    top: 20px;
+    left: 15px;
+  }
+}
+
+/* Smooth animations */
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+/* Ensure proper z-index layering */
+.navbar {
+  z-index: 1000;
+}
+
+.nav-toggle {
+  z-index: 1001;
+}
+
+.mobile-backdrop {
+  z-index: 999;
+}
+
+.top-header {
+  z-index: 998;
+}
+
+/* Body class for when sidebar is open to prevent background scrolling */
+body.sidebar-open {
+  overflow: hidden;
+}
+
+/* Optional: Add a smooth transition for the entire layout */
+.app-container {
+  transition: all 0.3s ease;
+}

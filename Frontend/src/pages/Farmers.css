@@ -1,0 +1,236 @@
+/* Farmers.css */
+.farmers-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+ 
+.page-title {
+  text-align: center;
+  color: #2c662d;
+  margin-bottom: 30px;
+  font-size: 2.2rem;
+  border-bottom: 2px solid #4CAF50;
+  padding-bottom: 10px;
+}
+ 
+/* Filters */
+.filters {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+  gap: 20px;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+ 
+.search-box input {
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  width: 300px;
+  font-size: 1rem;
+}
+ 
+.location-filter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+ 
+.location-filter label {
+  font-weight: 500;
+}
+ 
+.location-filter select {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: white;
+}
+ 
+/* Farmers List */
+.farmers-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 25px;
+}
+ 
+.farmer-card {
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+ 
+.farmer-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+ 
+.farmer-image {
+  text-align: center;
+  margin-bottom: 15px;
+}
+ 
+.image-placeholder {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin: 0 auto;
+  background-color: #e9ecef;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6c757d;
+  font-size: 2rem;
+  overflow: hidden;
+}
+ 
+/* Different colored placeholders for different farmers */
+.farmer1 {
+  background: linear-gradient(135deg, #4CAF50 0%, #8BC34A 100%);
+}
+ 
+.farmer2 {
+  background: linear-gradient(135deg, #FF9800 0%, #FFC107 100%);
+}
+ 
+.farmer3 {
+  background: linear-gradient(135deg, #03A9F4 0%, #00BCD4 100%);
+}
+ 
+.farmer4 {
+  background: linear-gradient(135deg, #9C27B0 0%, #E91E63 100%);
+}
+ 
+.farmer5 {
+  background: linear-gradient(135deg, #795548 0%, #FF5722 100%);
+}
+ 
+.farmer-info {
+  flex-grow: 1;
+}
+ 
+.farmer-name {
+  color: #2c662d;
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 1.5rem;
+  text-align: center;
+}
+ 
+.farmer-details {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+ 
+.detail-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1rem;
+}
+ 
+.icon {
+  font-size: 1.2rem;
+  width: 24px;
+  text-align: center;
+}
+ 
+/* Items Section */
+.items-section {
+  margin: 20px 0;
+}
+ 
+.items-section h3 {
+  margin-bottom: 10px;
+  color: #495057;
+  font-size: 1.1rem;
+}
+ 
+.items-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+ 
+.item-tag {
+  background-color: #e8f5e9;
+  color: #2c662d;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  border: 1px solid #c8e6c9;
+}
+ 
+.contact-btn {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  margin-top: auto;
+  transition: background-color 0.3s;
+}
+ 
+.contact-btn:hover {
+  background-color: #3d8b40;
+}
+ 
+.no-results {
+  text-align: center;
+  grid-column: 1 / -1;
+  padding: 40px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+ 
+/* Responsive design */
+@media (max-width: 768px) {
+  .filters {
+    flex-direction: column;
+  }
+ 
+  .search-box input {
+    width: 100%;
+  }
+ 
+  .farmers-list {
+    grid-template-columns: 1fr;
+  }
+}
+ 
+@media (max-width: 480px) {
+  .farmers-container {
+    padding: 15px;
+  }
+ 
+  .page-title {
+    font-size: 1.8rem;
+  }
+ 
+  .farmer-name {
+    font-size: 1.3rem;
+  }
+ 
+  .detail-item {
+    font-size: 0.9rem;
+  }
+}

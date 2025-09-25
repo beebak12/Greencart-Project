@@ -1,0 +1,561 @@
+/* FarmerSignup.css - GreenCart Theme with Bright Vegetables */
+.greencart-signup-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #2d5016 0%, #4a7c59 50%, #8fb996 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Animated Background - Bright Vegetables */
+.background-animation {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.floating-vegetable {
+  position: absolute;
+  font-size: 4rem;
+  opacity: 0.3;
+  animation: float 8s ease-in-out infinite;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+  text-shadow: 
+    0 0 20px rgba(255, 255, 255, 0.8),
+    0 0 40px rgba(255, 255, 255, 0.6),
+    0 0 60px rgba(255, 255, 255, 0.4);
+  transition: all 0.5s ease;
+}
+
+/* Individual vegetable positioning and colors */
+.tomato { 
+  top: 10%; 
+  left: 5%; 
+  animation-delay: 0s; 
+  color: #ff6b6b;
+  filter: drop-shadow(0 0 15px rgba(255, 107, 107, 0.7));
+}
+
+.carrot { 
+  top: 70%; 
+  right: 8%; 
+  animation-delay: 2s; 
+  color: #ffa726;
+  filter: drop-shadow(0 0 15px rgba(255, 167, 38, 0.7));
+}
+
+.leaf { 
+  bottom: 15%; 
+  left: 10%; 
+  animation-delay: 4s; 
+  font-size: 5rem;
+  color: #66bb6a;
+  filter: drop-shadow(0 0 15px rgba(102, 187, 106, 0.7));
+}
+
+.corn { 
+  top: 25%; 
+  right: 15%; 
+  animation-delay: 1s; 
+  color: #fff176;
+  filter: drop-shadow(0 0 15px rgba(255, 241, 118, 0.7));
+}
+
+.avocado { 
+  top: 60%; 
+  left: 20%; 
+  animation-delay: 3s; 
+  color: #81c784;
+  filter: drop-shadow(0 0 15px rgba(129, 199, 132, 0.7));
+}
+
+/* Add more vegetables for richer background */
+.floating-vegetable.eggplant {
+  top: 80%; 
+  right: 20%; 
+  animation-delay: 5s; 
+  color: #7b1fa2;
+  filter: drop-shadow(0 0 15px rgba(123, 31, 162, 0.7));
+}
+
+.floating-vegetable.strawberry {
+  top: 20%; 
+  left: 80%; 
+  animation-delay: 6s; 
+  color: #f44336;
+  filter: drop-shadow(0 0 15px rgba(244, 67, 54, 0.7));
+}
+
+.floating-vegetable.broccoli {
+  top: 40%; 
+  left: 75%; 
+  animation-delay: 7s; 
+  color: #388e3c;
+  filter: drop-shadow(0 0 15px rgba(56, 142, 60, 0.7));
+}
+
+@keyframes float {
+  0%, 100% { 
+    transform: translateY(0px) rotate(0deg) scale(1);
+    opacity: 0.3;
+  }
+  25% { 
+    transform: translateY(-40px) rotate(5deg) scale(1.1);
+    opacity: 0.5;
+  }
+  50% { 
+    transform: translateY(20px) rotate(-5deg) scale(1.05);
+    opacity: 0.4;
+  }
+  75% { 
+    transform: translateY(-20px) rotate(3deg) scale(1.08);
+    opacity: 0.6;
+  }
+}
+
+/* Hover effect on vegetables */
+.floating-vegetable:hover {
+  opacity: 0.8;
+  transform: scale(1.3) !important;
+  filter: drop-shadow(0 0 25px rgba(255, 255, 255, 0.9));
+  z-index: 10;
+}
+
+/* Pulse animation for extra brightness */
+@keyframes vegetablePulse {
+  0%, 100% { 
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 0.7;
+    transform: scale(1.2);
+  }
+}
+
+.floating-vegetable {
+  animation: float 8s ease-in-out infinite, vegetablePulse 4s ease-in-out infinite;
+}
+
+/* Different pulse speeds for variety */
+.tomato { animation-delay: 0s, 0s; }
+.carrot { animation-delay: 2s, 1s; }
+.leaf { animation-delay: 4s, 2s; }
+.corn { animation-delay: 1s, 3s; }
+.avocado { animation-delay: 3s, 4s; }
+.eggplant { animation-delay: 5s, 5s; }
+.strawberry { animation-delay: 6s, 6s; }
+.broccoli { animation-delay: 7s, 7s; }
+
+/* Main Layout */
+.signup-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  max-width: 1200px;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 25px;
+  overflow: hidden;
+  box-shadow: 
+    0 25px 50px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(15px);
+  min-height: 700px;
+  position: relative;
+  z-index: 2;
+}
+
+/* Brand Section */
+.brand-section {
+  background: linear-gradient(135deg, rgba(45, 80, 22, 0.9) 0%, rgba(74, 124, 89, 0.9) 100%);
+  color: white;
+  padding: 60px 40px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.brand-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100" opacity="0.1"><circle cx="50" cy="50" r="2" fill="white"/></svg>');
+}
+
+.brand-content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.logo-icon {
+  font-size: 3.5rem;
+  animation: pulse 2s ease-in-out infinite;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+}
+
+@keyframes pulse {
+  0%, 100% { 
+    transform: scale(1);
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+  }
+  50% { 
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.8));
+  }
+}
+
+.logo h1 {
+  font-size: 2.8rem;
+  font-weight: 700;
+  margin: 0;
+  background: linear-gradient(135deg, #fff 0%, #e8f5e8 100%);
+ 
+  text-shadow: 0 2px 10px rgba(255, 255, 255, 0.3);
+}
+
+.brand-section h2 {
+  font-size: 2.2rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  line-height: 1.3;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.brand-section p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 40px;
+  opacity: 0.95;
+}
+
+.features {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.feature {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  font-size: 1.1rem;
+}
+
+.feature-icon {
+  font-size: 1.8rem;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 10px;
+  border-radius: 12px;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+}
+
+/* Form Section */
+.form-section {
+  padding: 60px 50px;
+  display: flex;
+  align-items: center;
+}
+
+.form-container {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.form-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.form-header h3 {
+  font-size: 2.2rem;
+  color: #2d5016;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.form-header p {
+  color: #666;
+  font-size: 1.1rem;
+}
+
+/* Form Elements */
+.signup-form {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.input-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 25px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #2d5016;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.label-icon {
+  font-size: 1.2rem;
+}
+
+input, textarea {
+  padding: 16px 20px;
+  border: 2px solid #e8f5e8;
+  border-radius: 12px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: #f8fff8;
+  font-family: inherit;
+  resize: vertical;
+}
+
+input:focus, textarea:focus {
+  outline: none;
+  border-color: #4a7c59;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(74, 124, 89, 0.1);
+  transform: translateY(-2px);
+}
+
+input::placeholder, textarea::placeholder {
+  color: #aaa;
+}
+
+input.error, textarea.error {
+  border-color: #ff6b6b;
+  background: #fff5f5;
+}
+
+.error-message {
+  color: #ff6b6b;
+  font-size: 0.9rem;
+  margin-top: 5px;
+  font-weight: 500;
+}
+
+/* Signup Button */
+.signup-btn {
+  padding: 18px;
+  background: linear-gradient(135deg, #4a7c59 0%, #2d5016 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  position: relative;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+.signup-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s;
+}
+
+.signup-btn:hover::before {
+  left: 100%;
+}
+
+.signup-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(74, 124, 89, 0.4);
+}
+
+.signup-btn:active {
+  transform: translateY(-1px);
+}
+
+.signup-btn.submitting {
+  background: #95a5a6;
+  cursor: not-allowed;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid transparent;
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.btn-icon {
+  font-size: 1.4rem;
+}
+
+/* Login Link */
+.login-link {
+  text-align: center;
+  margin-top: 25px;
+}
+
+.login-link p {
+  color: #666;
+  font-size: 1rem;
+}
+
+.login-link a {
+  color: #4a7c59;
+  text-decoration: none;
+  font-weight: 600;
+  position: relative;
+}
+
+.login-link a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: #4a7c59;
+  transition: width 0.3s ease;
+}
+
+.login-link a:hover::after {
+  width: 100%;
+}
+
+/* Responsive Design */
+@media (max-width: 968px) {
+  .signup-wrapper {
+    grid-template-columns: 1fr;
+    max-width: 500px;
+  }
+  
+  .brand-section {
+    padding: 40px 30px;
+    text-align: center;
+  }
+  
+  .form-section {
+    padding: 40px 30px;
+  }
+  
+  .logo {
+    justify-content: center;
+  }
+  
+  /* Adjust vegetables for mobile */
+  .floating-vegetable {
+    font-size: 3rem;
+    opacity: 0.4;
+  }
+}
+
+@media (max-width: 480px) {
+  .greencart-signup-container {
+    padding: 10px;
+  }
+  
+  .signup-wrapper {
+    border-radius: 20px;
+  }
+  
+  .brand-section {
+    padding: 30px 20px;
+  }
+  
+  .form-section {
+    padding: 30px 20px;
+  }
+  
+  .logo h1 {
+    font-size: 2.2rem;
+  }
+  
+  .brand-section h2 {
+    font-size: 1.8rem;
+  }
+  
+  .form-header h3 {
+    font-size: 1.8rem;
+  }
+  
+  input, textarea {
+    padding: 14px 16px;
+  }
+  
+  .floating-vegetable {
+    font-size: 2.5rem;
+    opacity: 0.5;
+  }
+}
+
+/* Animation for form elements */
+.input-group {
+  animation: slideInUp 0.6s ease-out;
+  animation-fill-mode: both;
+}
+
+.input-group:nth-child(1) { animation-delay: 0.1s; }
+.input-group:nth-child(2) { animation-delay: 0.2s; }
+.input-group:nth-child(3) { animation-delay: 0.3s; }
+.input-group:nth-child(4) { animation-delay: 0.4s; }
+.input-group:nth-child(5) { animation-delay: 0.5s; }
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
