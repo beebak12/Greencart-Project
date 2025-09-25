@@ -39,4 +39,54 @@ router.put('/profile', validateProfileUpdate, updateProfile);
 router.put('/password', validatePasswordChange, changePassword);
 router.post('/logout', logout);
 
+
+
+
+const User = require("../models/User"); // adjust path if needed
+const nodemailer = require("nodemailer");
+
+// ============================
+// Forgot Password Route
+// ============================
+router.post("/forgot-password", async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    // 1. Check if user exists
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ success: false, message: "Email not found" });
+    }
+
+    // 2. Setup nodemailer transporter
+    const transporter = nodemailer.createTransport({
+      host: process.env.EMAIL_HOST,
+      port: process.env.EMAIL_PORT,
+      secure: false,
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+    // 3. Email content (sending original password — as per your request)
+    const mailOptions = {
+      from: process.env.EMAIL_FROM,
+      to: email,
+      subject: "Your Greencart Account Password",
+      text: `Hello ${user.name},\n\nYour password is: ${user.password}\n\nPlease keep it safe.`,
+    };
+
+    // 4. Send email
+    await transporter.sendMail(mailOptions);
+
+    return res.json({ success: true, message: "Password sent to your email!" });
+  } catch (error) {
+    console.error("Forgot password error:", error);
+    res.status(500).json({ success: false, message: "Something went wrong" });
+  }
+});
+
 module.exports = router;
+
+

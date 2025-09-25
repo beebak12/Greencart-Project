@@ -1,12 +1,20 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const authReset = require('./routes/authReset');
+
 const cors = require("cors");
 const nodemailer = require("nodemailer");
+
+const dotenv = require("dotenv");
+const connectDB = require("./config/db"); // adjust path
+const authRoutes = require("./routes/authRoutes");
+
 require("dotenv").config();
 
 const app = express();
 
 // Middleware (order is important!)
+app.use('/api/auth', authReset);
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: false }));
 app.use(cors({

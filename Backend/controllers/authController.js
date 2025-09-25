@@ -125,6 +125,8 @@ const login = async (req, res) => {
   }
 };
 
+
+
 // @desc    Get current logged in user
 // @route   GET /api/auth/me
 // @access  Private
