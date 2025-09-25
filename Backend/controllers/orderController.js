@@ -2,10 +2,141 @@ const { validationResult } = require('express-validator');
 const Order = require('../models/Order.models');
 const Cart = require('../models/Cart.models');
 const Product = require('../models/Product.models');
+const OrderHistory = require('../models/OrderHistory');
 
-// @desc    Create new order
-// @route   POST /api/orders
-// @access  Private
+// ✅ PLACE ORDER FUNCTION (for new order history system)
+const placeOrder = async (req, res) => {
+  try {
+    const { items, totalAmount, shippingAddress, paymentMethod } = req.body;
+    const customer = req.user;
+
+    // Create farmer notifications
+    const farmerNotifications = [];
+    const uniqueFarmers = new Map();
+
+    for (let item of items) {
+      if (!uniqueFarmers.has(item.farmerId)) {
+        uniqueFarmers.set(item.farmerId, {
+          farmerId: item.farmerId,
+          farmerName: item.farmerName,
+          notified: false,
+          notificationDate: null,
+          status: 'pending'
+        });
+      }
+    }
+
+    farmerNotifications.push(...uniqueFarmers.values());
+
+    // Create order history
+    const order = new OrderHistory({
+      customer: {
+        userId: customer._id || customer.id,
+        name: customer.name,
+        email: customer.email,
+        phone: customer.phone
+      },
+      items: items,
+      totalAmount: totalAmount,
+      shippingAddress: shippingAddress,
+      paymentMethod: paymentMethod,
+      farmerNotifications: farmerNotifications
+    });
+
+    // Save order
+    const savedOrder = await order.save();
+
+    // Notify farmers
+    await sendFarmerNotifications(savedOrder);
+
+    res.status(201).json({
+      success: true,
+      message: 'Order placed successfully!',
+      order: savedOrder
+    });
+  } catch (error) {
+    console.error('Place order error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error placing order: ' + error.message
+    });
+  }
+};
+
+// ✅ GET ORDER HISTORY FUNCTION
+const getOrderHistory = async (req, res) => {
+  try {
+    const userId = req.params.userId || req.user.id;
+    
+    const orders = await OrderHistory.find({ 'customer.userId': userId })
+      .sort({ orderDate: -1 });
+
+    res.status(200).json({
+      success: true,
+      orders: orders
+    });
+
+  } catch (error) {
+    console.error('Error fetching order history:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Error fetching order history' 
+    });
+  }
+};
+
+// ✅ UPDATE ORDER STATUS BY FARMER
+const updateOrderStatus = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const { itemId, status } = req.body;
+
+    const order = await OrderHistory.findById(orderId);
+    if (!order) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Order not found' 
+      });
+    }
+
+    // Update specific item status
+    const item = order.items.id(itemId);
+    if (item) {
+      // Update farmer notification status
+      const farmerNotification = order.farmerNotifications.find(
+        notif => notif.farmerId.toString() === item.farmerId.toString()
+      );
+      
+      if (farmerNotification) {
+        farmerNotification.status = status;
+        farmerNotification.notificationDate = new Date();
+      }
+
+      order.lastUpdated = new Date();
+      await order.save();
+
+      res.status(200).json({
+        success: true,
+        message: 'Order status updated successfully',
+        order: order
+      });
+    } else {
+      res.status(404).json({
+        success: false,
+        message: 'Item not found in order'
+      });
+    }
+
+  } catch (error) {
+    console.error('Error updating order status:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Error updating order status' 
+    });
+  }
+};
+
+// ✅ CREATE ORDER (Original function)
 const createOrder = async (req, res) => {
   try {
     // Check for validation errors
@@ -64,15 +195,10 @@ const createOrder = async (req, res) => {
       });
     }
 
-    // Calculate delivery fee (you can customize this logic)
-    const deliveryFee = subtotal > 500 ? 0 : 50; // Free delivery over Rs. 500
-
-    // Calculate tax (13% VAT in Nepal)
+    // Calculate totals
+    const deliveryFee = subtotal > 500 ? 0 : 50;
     const tax = Math.round(subtotal * 0.13);
-
-    // Apply any discount (you can add discount logic here)
     const discount = 0;
-
     const totalAmount = subtotal + deliveryFee + tax - discount;
 
     // Create order
@@ -124,9 +250,7 @@ const createOrder = async (req, res) => {
   }
 };
 
-// @desc    Get user orders
-// @route   GET /api/orders
-// @access  Private
+// ✅ GET USER ORDERS
 const getMyOrders = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -153,9 +277,7 @@ const getMyOrders = async (req, res) => {
   }
 };
 
-// @desc    Get single order
-// @route   GET /api/orders/:id
-// @access  Private
+// ✅ GET SINGLE ORDER
 const getOrder = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id)
@@ -200,10 +322,8 @@ const getOrder = async (req, res) => {
   }
 };
 
-// @desc    Update order status
-// @route   PUT /api/orders/:id/status
-// @access  Private (Admin only)
-const updateOrderStatus = async (req, res) => {
+// ✅ UPDATE ORDER STATUS (Admin only)
+const updateOrderStatusAdmin = async (req, res) => {
   try {
     const { status, note } = req.body;
 
@@ -252,9 +372,7 @@ const updateOrderStatus = async (req, res) => {
   }
 };
 
-// @desc    Cancel order
-// @route   PUT /api/orders/:id/cancel
-// @access  Private
+// ✅ CANCEL ORDER
 const cancelOrder = async (req, res) => {
   try {
     const { reason } = req.body;
@@ -310,9 +428,7 @@ const cancelOrder = async (req, res) => {
   }
 };
 
-// @desc    Get all orders (Admin only)
-// @route   GET /api/orders/admin/all
-// @access  Private (Admin only)
+// ✅ GET ALL ORDERS (Admin only)
 const getAllOrders = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -357,9 +473,7 @@ const getAllOrders = async (req, res) => {
   }
 };
 
-// @desc    Get order statistics (Admin only)
-// @route   GET /api/orders/admin/stats
-// @access  Private (Admin only)
+// ✅ GET ORDER STATISTICS (Admin only)
 const getOrderStats = async (req, res) => {
   try {
     const totalOrders = await Order.countDocuments();
@@ -395,9 +509,7 @@ const getOrderStats = async (req, res) => {
   }
 };
 
-// @desc    Get orders that include items for the current farmer
-// @route   GET /api/orders/farmer
-// @access  Private (Farmer)
+// ✅ GET FARMER ORDERS
 const getFarmerOrders = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -435,11 +547,48 @@ const getFarmerOrders = async (req, res) => {
   }
 };
 
+// ✅ HELPER FUNCTION: Send farmer notifications
+const sendFarmerNotifications = async (order) => {
+  try {
+    order.farmerNotifications.forEach(async (notification) => {
+      console.log(`📧 Notification sent to farmer: ${notification.farmerName}`);
+      console.log(`📦 Order Details: ${order.items.filter(item => 
+        item.farmerId.toString() === notification.farmerId.toString()
+      ).map(item => item.name).join(', ')}`);
+      
+      notification.notified = true;
+      notification.notificationDate = new Date();
+    });
+
+    await order.save();
+    
+  } catch (error) {
+    console.error('Error sending farmer notifications:', error);
+  }
+};
+
+// ✅ HELPER FUNCTION: Update overall order status
+const updateOverallOrderStatus = async (order) => {
+  const notifications = order.farmerNotifications;
+  
+  if (notifications.every(notif => notif.status === 'completed')) {
+    order.orderStatus = 'completed';
+  } else if (notifications.some(notif => notif.status === 'cancelled')) {
+    order.orderStatus = 'cancelled';
+  } else if (notifications.some(notif => notif.status === 'processing')) {
+    order.orderStatus = 'processing';
+  }
+};
+
+// ✅ EXPORT ALL FUNCTIONS
 module.exports = {
-  createOrder,
+  placeOrder,           // New order history system
+  getOrderHistory,      // Get user's order history
+  updateOrderStatus,    // Farmer updates status
+  createOrder,          // Original order system
   getMyOrders,
   getOrder,
-  updateOrderStatus,
+  updateOrderStatusAdmin, // Admin updates status
   cancelOrder,
   getAllOrders,
   getOrderStats,

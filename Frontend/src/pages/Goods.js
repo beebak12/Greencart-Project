@@ -11,55 +11,7 @@ import Navbarr from '../components/common/Navbarr';
 // import fruitsImage from '../assets/icons/fruits.png';
 // import vegetablesImage from '../assets/icons/vegetable.png';
 
-import Cauli from '../assets/images/cauli.jpg';
-import Cabbage from '../assets/images/cabbage.avif';
-import Potato from '../assets/images/aalu.webp';
-import Radish from '../assets/images/radish.avif';
-import Carrot from '../assets/images/carrot.jpg';
-import Capsicum from '../assets/images/capsicum.png';
-import Mushroom from '../assets/images/mushroom.jpeg';
-import Brinjal from '../assets/images/brinjal.webp';
-import Ladyfinger from '../assets/images/ladyfinger.webp';
-import Bittergourd from '../assets/images/bittergourd.jpg';
-import Broccoli from '../assets/images/Brocoli.jpg';
-import Pumpkin from '../assets/images/pumpkin.jpg';
-import Onion from '../assets/images/onion.jpeg';
-import Garlic from '../assets/images/garlic.jpg';
-import Greenpeas from '../assets/images/greenpea.jpg';
-import Ginger from '../assets/images/ginger.jpg';
-import Chilli from '../assets/images/chilly.webp';
 
-import Brownrice from '../assets/images/brownrice.jpg';
-import WholeWheat from '../assets/images/wholewheat.jpg';
-import Millet from '../assets/images/millet.jpg';
-import Corn from '../assets/images/corn.jpg';
-import Beans from '../assets/images/beans.jpg';
-import Soyabeans from '../assets/images/soyabeans.jpg';
-import KidneyBeans from '../assets/images/kidneybeans.jpg';
-import Whiterice from '../assets/images/whiterice.webp';
-import FlaxSeeds from '../assets/images/flaxseed.jpg';
-import ChiaSeeds from '../assets/images/chiaseeds.png';
-import Barley from '../assets/images/Barley.webp';
-import RedLentils from '../assets/images/relentils.jpg';
-import BlackLentils from '../assets/images/blacklentil.jpg';
-import Chickpeas from '../assets/images/chickpea.webp';
-
-import Apple from '../assets/images/apple.jpg';
-import Banana from '../assets/images/banana.jpg';
-import Pomegranate from '../assets/images/anar.jpg';
-import Grapes from '../assets/images/grapes.jpg';
-import Guava from '../assets/images/guava.jpg';
-import Papaya from '../assets/images/papaya.jpg';
-import Pineapple from '../assets/images/pineapple.jpg';
-import Peach from '../assets/images/peach.jpg';
-import Strawberry from '../assets/images/strawberry.jpg';
-import Kiwi from '../assets/images/kiwi.jpg';
-import Mango from '../assets/images/mango.jpg';
-import Lemon from '../assets/images/lemon.jpg';
-import Orange from '../assets/images/orange.jpg';
-import Watermelon from '../assets/images/watermelon.jpg';
-import Dragonfruit from '../assets/images/dragonfruit.jpg';
-import Litchhi from '../assets/images/litchi.jpg';
 
 const Goods = () => {
   const navigate = useNavigate();

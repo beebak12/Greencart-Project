@@ -4,23 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Navbarr from '../components/common/Navbarr';
 import { useSearch } from '../context/SearchContext';
 import './Vegetables.css';
-import Cauli from '../assets/images/cauli.jpg';
-import Cabbage from '../assets/images/cabbage.avif';
-import Potato from '../assets/images/aalu.webp';
-import Radish  from '../assets/images/radish.avif';
-import Carrot from '../assets/images/carrot.jpg';
-import Capsicum from '../assets/images/capsicum.png';
-import Mushroom from '../assets/images/mushroom.jpeg';
-import Brinjal from '../assets/images/brinjal.webp';
-import Ladyfinger from '../assets/images/ladyfinger.webp';
-import Bittergourd from '../assets/images/bittergourd.jpg';
-import Broccoli from '../assets/images/Brocoli.jpg';
-import Pumpkin from '../assets/images/pumpkin.jpg';
-import Onion from '../assets/images/onion.jpeg';
-import Garlic from '../assets/images/garlic.jpg';
-import Greenpeas from '../assets/images/greenpea.jpg';
-import Ginger from '../assets/images/ginger.jpg';
-import Chilli from '../assets/images/chilly.webp';
+
 
 
 

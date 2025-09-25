@@ -3,22 +3,7 @@ import { useCart } from '../context/CartContext';
 import { useNavigate } from 'react-router-dom'; 
 import { useSearch } from '../context/SearchContext';
 import './Fruits.css';
-import Apple from '../assets/images/apple.jpg';
-import Banana from '../assets/images/banana.jpg';
-import Pomegranate from '../assets/images/anar.jpg';
-import Grapes from '../assets/images/grapes.jpg';
-import Guava from '../assets/images/guava.jpg';
-import Papaya from '../assets/images/papaya.jpg';
-import Pineapple from '../assets/images/pineapple.jpg';
-import Peach from '../assets/images/peach.jpg';
-import Strawberry from '../assets/images/strawberry.jpg';
-import Kiwi from '../assets/images/kiwi.jpg';
-import Mango from '../assets/images/mango.jpg';
-import Lemon from '../assets/images/lemon.jpg';
-import Orange from '../assets/images/orange.jpg';
-import Watermelon from '../assets/images/watermelon.jpg';
-import Dragonfruit from '../assets/images/dragonfruit.jpg';
-import Litchhi from '../assets/images/litchi.jpg';
+
 import Navbarr from '../components/common/Navbarr';
 
 

@@ -142,11 +142,11 @@ app.get("/", (req, res) => {
   });
 });
 
-// API Routes
+// API Routes (ALL ROUTES IN ONE PLACE)
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/products', require('./routes/productsRoutes'));
 app.use('/api/cart', require('./routes/cartRoutes'));
-app.use('/api/orders', require('./routes/ordersRoutes'));
+app.use('/api/orders', require('./routes/ordersRoutes')); // ✅ ONLY ONCE
 app.use('/api/farmers', require('./routes/farmersRoutes'));
 
 // Health check endpoint

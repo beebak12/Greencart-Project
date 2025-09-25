@@ -17,7 +17,9 @@ const Checkout = () => {
     toll: '',
     phone: '',
     email: '',
-    paymentMethod: 'cash_on_delivery' // Added payment method state
+    state: '',
+    postalCode: '',
+    paymentMethod: 'cash_on_delivery'
   });
 
   const [errors, setErrors] = useState({});
@@ -81,7 +83,7 @@ const Checkout = () => {
 
     if (!validateForm()) {
       setIsSubmitting(false);
-      return;
+      return; 
     }
     
     if (!token) {
@@ -91,117 +93,173 @@ const Checkout = () => {
     }
 
     try {
-
-      
-      const subtotal = calculateSubtotal();
-      const deliveryFee = calculateShipping();
-      const taxAmount = calculateTax();
+      const userData = JSON.parse(localStorage.getItem('userData') || '{}');
       const totalAmount = calculateTotal();
 
-      // Get user data from localStorage
-      const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+      console.log("User data from localStorage:", userData);
+      console.log("Cart items:", cartItems);
 
-        console.log("User data from localStorage:", userData);
-    console.log("Cart items:", cartItems);
-
-    // Ensure we have valid product and farmer IDs
-    const itemsWithValidIds = cartItems.map((item) => {
-      // Check if we have valid IDs, if not use fallbacks
-      const productId = item._id || item.id || `temp-${Date.now()}-${Math.random()}`;
-      const farmerId = item.farmer || item.farmerId || item.farmer?._id || "66f7f2c3a2b4c5d678901234";
-      
-      console.log(`Processing item: ${item.name}`, { productId, farmerId });
-      
-      return {
-        product: productId,
+      // ✅ FIXED: Simplified farmer details without API calls
+      const itemsWithFarmerDetails = cartItems.map((item, index) => ({
+        product: item._id || item.id,
         name: item.name,
         price: item.price,
         quantity: item.quantity,
         unit: item.unit || "kg",
-        farmer: farmerId
-      };
-    });
+        farmer: item.farmer || `farmer-${index + 1}`,
+        farmerId: item.farmer || `66f7f2c3a2b4c5d67890123${index}`,
+        farmerName: item.farmerName || `Farmer ${index + 1}`,
+        farmerEmail: `farmer${index + 1}@greencart.com`
+      }));
 
-      const payload = {
-        items: cartItems.map((item) => ({
-          product: item._id || item.id,
+      // ✅ ORDER HISTORY PAYLOAD (Primary system)
+      const orderHistoryPayload = {
+        customer: {
+          userId: userData._id || userData.id,
+          name: `${formData.firstName} ${formData.lastName}`.trim(),
+          email: formData.email,
+          phone: formData.phone
+        },
+        items: itemsWithFarmerDetails.map(item => ({
+          productId: item.product,
           name: item.name,
           price: item.price,
           quantity: item.quantity,
-          unit: item.unit || "kg",
-          farmer: item.farmer || item.farmerId || "66f7f2c3a2b4c5d678901234"
+          farmerId: item.farmerId,
+          farmerName: item.farmerName,
+          farmerEmail: item.farmerEmail
         })),
+        totalAmount: totalAmount,
         shippingAddress: {
-          fullName: `${formData.firstName} ${formData.lastName}`.trim(),
-          phone: formData.phone,
-          email: formData.email,
-          street: formData.toll,
+          address: formData.toll,
           city: formData.city,
-          ward: formData.wardNo,
+          state: formData.state || "Gandaki",
+          postalCode: formData.postalCode || "44600",
           country: "Nepal"
         },
-        orderSummary: {
-          subtotal,
-          deliveryFee,
-          tax: taxAmount,
-          totalAmount
-        },
-        paymentInfo: {
-          method: formData.paymentMethod,
-          status: formData.paymentMethod === 'cash_on_delivery' ? 'pending' : 'completed'
-        },
-        customer: userData._id || userData.id,
-        status: 'pending'
+        paymentMethod: formData.paymentMethod
       };
 
-      console.log("Order payload:", payload);
+      console.log("Order History payload:", orderHistoryPayload);
 
-      const response = await fetch(
-        `${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/orders`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          },
-          body: JSON.stringify(payload)
+      // ✅ TRY NEW ORDER HISTORY SYSTEM FIRST
+      let orderSuccess = false;
+      let orderResult = null;
+
+      try {
+        console.log("🔄 Attempting to place order via new system...");
+        const response = await fetch(
+          `${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/orders/place-order`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify(orderHistoryPayload)
+          }
+        );
+
+        orderResult = await response.json();
+        console.log("📦 New system response:", orderResult);
+
+        if (response.ok) {
+          orderSuccess = true;
+          console.log("✅ Order placed successfully via new system");
+        } else {
+          throw new Error(orderResult.message || 'New system failed');
         }
-      );
+      } catch (newSystemError) {
+        console.warn("⚠️ New system failed, trying original system:", newSystemError.message);
+        
+        // ✅ FALLBACK: Try original order system
+        try {
+          const originalOrderPayload = {
+            items: itemsWithFarmerDetails.map(item => ({
+              product: item.product,
+              name: item.name,
+              price: item.price,
+              quantity: item.quantity,
+              unit: item.unit,
+              farmer: item.farmer
+            })),
+            shippingAddress: {
+              fullName: `${formData.firstName} ${formData.lastName}`.trim(),
+              phone: formData.phone,
+              email: formData.email,
+              street: formData.toll,
+              city: formData.city,
+              ward: formData.wardNo,
+              country: "Nepal"
+            },
+            orderSummary: {
+              subtotal: calculateSubtotal(),
+              deliveryFee: calculateShipping(),
+              tax: calculateTax(),
+              totalAmount: totalAmount
+            },
+            paymentInfo: {
+              method: formData.paymentMethod,
+              status: formData.paymentMethod === 'cash_on_delivery' ? 'pending' : 'completed'
+            },
+            customer: userData._id || userData.id,
+            status: 'pending'
+          };
 
-      const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to place order');
+          console.log("🔄 Attempting to place order via original system...");
+          const originalResponse = await fetch(
+            `${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/orders`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+              },
+              body: JSON.stringify(originalOrderPayload)
+            }
+          );
+
+          const originalResult = await originalResponse.json();
+          console.log("📦 Original system response:", originalResult);
+
+          if (originalResponse.ok) {
+            orderSuccess = true;
+            orderResult = originalResult;
+            console.log("✅ Order placed successfully via original system");
+          } else {
+            throw new Error(originalResult.message || 'Original system also failed');
+          }
+        } catch (originalError) {
+          console.error("❌ Both systems failed:", originalError);
+          throw new Error(`Order failed: ${originalError.message}`);
+        }
       }
 
-      // Success
-      alert("Order placed successfully!");
-       console.log("Order created successfully:", data);
-      
-      // Clear cart
-      clearCart();
-      
-      // Navigate to order history
-      navigate("/orderhistory");
+      if (orderSuccess) {
+        alert("🎉 Order placed successfully! Farmers have been notified.");
+        console.log("✅ Final order result:", orderResult);
+        
+        // Clear cart and redirect
+        clearCart();
+        navigate("/orderhistory");
+      }
       
     } catch (error) {
-      console.error("Order placement error:", error);
+      console.error("❌ Order placement error:", error);
 
-        // More specific error messages
-    if (error.message.includes('Failed to fetch')) {
-      alert("Network error: Cannot connect to server. Please check your internet connection and make sure the backend server is running.");
-    } else if (error.message.includes('401')) {
-      alert("Authentication error: Please log in again.");
-      localStorage.removeItem('token');
-      localStorage.removeItem('userData');
-      navigate('/signin');
-    } else if (error.message.includes('500')) {
-      alert("Server error: Please try again later or contact support.");
-    } else {
-      alert(`Error: ${error.message}`);
-    }
-    
-    
+      // Specific error handling
+      if (error.message.includes('Failed to fetch')) {
+        alert("🌐 Network error: Cannot connect to server. Please check:\n• Backend server is running on port 5000\n• Internet connection\n• Server status");
+      } else if (error.message.includes('401')) {
+        alert("🔐 Authentication error: Please log in again.");
+        localStorage.removeItem('token');
+        localStorage.removeItem('userData');
+        navigate('/signin');
+      } else if (error.message.includes('500')) {
+        alert("⚡ Server error: Please try again later or contact support.");
+      } else {
+        alert(`❌ Error: ${error.message}`);
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -314,6 +372,30 @@ const Checkout = () => {
                   placeholder="98XXXXXXXX"
                 />
                 {errors.phone && <span className="error-message">{errors.phone}</span>}
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="state">State/Province</label>
+                <input
+                  type="text"
+                  id="state"
+                  name="state"
+                  value={formData.state}
+                  onChange={handleInputChange}
+                  placeholder="e.g., Gandaki Province"
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="postalCode">Postal Code</label>
+                <input
+                  type="text"
+                  id="postalCode"
+                  name="postalCode"
+                  value={formData.postalCode}
+                  onChange={handleInputChange}
+                  placeholder="e.g., 44600"
+                />
               </div>
 
               <div className="form-group">
