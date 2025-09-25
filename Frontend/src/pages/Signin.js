@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Link } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import Google from '../assets/icons/google.png';
 import Facebook from '../assets/icons/facebook.png';
 import Header from '../components/common/Header';
@@ -13,95 +15,141 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
-  const [loading, setLoading] = useState(false); // ✅ Added this line
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    // Basic validation
+    const newErrors = {};
+    if (!email) newErrors.email = "Email is required";
+    if (!password) newErrors.password = "Password is required";
     
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
 
-  
-  // Basic validation
-  const newErrors = {};
-  if (!email) newErrors.email = "Email is required";
-  if (!password) newErrors.password = "Password is required";
-  
-  if (Object.keys(newErrors).length > 0) {
-    setErrors(newErrors);
-    return;
-  }
-
-  setLoading(true);
-  
-  try {
-    const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
-    console.log("🔍 Sending login request to:", `${API_URL}/api/auth/customer/login`);
-    console.log("📧 Email being sent:", email);
+    setLoading(true);
     
-    const res = await fetch(`${API_URL}/api/auth/customer/login`, {
-      method: 'POST',
-      headers: { 
-        'Content-Type': 'application/json' 
-      },
-      body: JSON.stringify({ 
-        email: email.trim(), 
-        password: password 
-      })
-    });
+    try {
+      const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+      console.log("🔍 Sending login request to:", `${API_URL}/api/auth/customer/login`);
+      console.log("📧 Email being sent:", email);
+      
+      const res = await fetch(`${API_URL}/api/auth/customer/login`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json' 
+        },
+        body: JSON.stringify({ 
+          email: email.trim(), 
+          password: password 
+        })
+      });
 
-    console.log("✅ Response status:", res.status);
-    
-    const data = await res.json();
-    console.log("📨 Response data:", data);
+      console.log("✅ Response status:", res.status);
+      
+      const data = await res.json();
+      console.log("📨 Response data:", data);
 
-    if (res.ok) {
-      if (data.token) {
-        localStorage.setItem('token', data.token);
-        if (data.user) {
-          localStorage.setItem('userData', JSON.stringify(data.user));
-        } else if (data.customer) {
-          localStorage.setItem('userData', JSON.stringify(data.customer));
+      if (res.ok) {
+        if (data.token) {
+          localStorage.setItem('token', data.token);
+          if (data.user) {
+            localStorage.setItem('userData', JSON.stringify(data.user));
+          } else if (data.customer) {
+            localStorage.setItem('userData', JSON.stringify(data.customer));
+          }
+          
+          // ✅ SUCCESS TOAST
+          toast.success('🎉 Login successful! Redirecting...', {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          });
+          
+          // Navigate after a short delay
+          setTimeout(() => {
+            navigate('/home');
+          }, 2000);
+          
+        } else {
+          // ✅ WARNING TOAST
+          toast.warn('⚠️ Login successful but no token received', {
+            position: "top-right",
+            autoClose: 4000,
+          });
         }
-        alert('Login successful!');
-        navigate('/goods'); // Changed from '/home' to '/goods'
       } else {
-        alert('Login successful but no token received');
+        // ✅ ERROR TOAST for login failure
+        toast.error(data.message || data.error || '❌ Login failed. Please try again.', {
+          position: "top-right",
+          autoClose: 5000,
+        });
       }
-    } else {
-      alert(data.message || data.error || 'Login failed. Please try again.');
+    } catch (err) {
+      console.error('❌ Login error details:', err);
+      console.error('❌ Error name:', err.name);
+      console.error('❌ Error message:', err.message);
+      
+      // ✅ SPECIFIC ERROR TOASTS
+      if (err.name === 'TypeError') {
+        toast.error('🔌 Cannot connect to server. Please check if the backend is running on http://localhost:5000', {
+          position: "top-right",
+          autoClose: 6000,
+        });
+      } else {
+        toast.error('🌐 Network error. Please check your connection and try again.', {
+          position: "top-right",
+          autoClose: 5000,
+        });
+      }
+    } finally {
+      setLoading(false);
     }
-  } catch (err) {
-    console.error('❌ Login error details:', err);
-    console.error('❌ Error name:', err.name);
-    console.error('❌ Error message:', err.message);
-    
-    // More specific error messages
-    if (err.name === 'TypeError') {
-      alert('Cannot connect to server. Please check if the backend is running on http://localhost:5000');
-    } else {
-      alert('Network error. Please check your connection and try again.');
-    }
-  } finally {
-    setLoading(false);
-  }
-};
-
-
+  };
 
   const handleFarmerButtonClick = () => {
-    navigate('/farmersignin');
+    // ✅ INFO TOAST for navigation
+    toast.info('👨‍🌾 Redirecting to farmer login...', {
+      position: "top-right",
+      autoClose: 2000,
+    });
+    
+    setTimeout(() => {
+      navigate('/farmersignin');
+    }, 1000);
   };
 
   return (
     <div>
       <Header />
+      
+      {/* ✅ TOAST CONTAINER - Add this once in your app */}
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     
       <div className="login-container">
         {/* Left side - normal login */}
         <div className="login-box">
-          <h2 className="welcome-text">Welcome back 👋</h2>
+          <h2 className="welcome-text">Welcome to Greencart</h2>
+          <h3 className="customer-text">Customer login</h3>
           <p className="subtitle">
-            Login to continue supporting your local farmers
+             Support your local farmers by purchasing the products
           </p>
 
           <form onSubmit={handleSubmit} className="login-form">
@@ -148,7 +196,7 @@ const Login = () => {
             </div>
 
             <button type="submit" className="login-btn" disabled={loading}>
-              {loading ? 'Logging in...' : 'Log in'} {/* ✅ Added loading state */}
+              {loading ? 'Logging in...' : 'Log in'}
             </button>
           </form>
 
@@ -156,16 +204,7 @@ const Login = () => {
             <span>OR</span>
           </div>
 
-          <div className="social-login">
-            <button type="button" className="google-btn">
-              <img src={Google} alt="Google" width="30" height="30" />
-              Continue with Google
-            </button>
-            <button type="button" className="facebook-btn">
-              <img src={Facebook} alt="Facebook" width="30" height="30" />
-              Continue with Facebook
-            </button>
-          </div>
+          
 
           <p className="signup-text">
             New to GreenCart? <Link to="/costumersignup" className="signup-link">Sign up</Link>

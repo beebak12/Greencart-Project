@@ -59,7 +59,7 @@
 }
 
 .farmer-btn:hover {
-  background-color: #1b5e20;
+  background-color: #0a530f;
    transform: translateY(-3px); /* Add hover effect */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
@@ -67,10 +67,13 @@
 
 
 .welcome-text {
-  color: #2c662d;
+  color: #0c450d;
   font-size: 2rem;
   margin-bottom: 10px;
   font-weight: bold;
+}
+.customer-text {
+   color: #2c662d;
 }
 
 .subtitle {

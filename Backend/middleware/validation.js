@@ -1,4 +1,4 @@
-const { body } = require('express-validator');
+const { body, validationResult } = require('express-validator');
 
 // Registration validation
 const validateRegister = [
@@ -197,7 +197,7 @@ const validateProduct = [
     .withMessage('Maximum order quantity must be at least 1')
 ];
 
-// Order validation
+// Order validation rules
 const validateOrder = [
   body('items')
     .isArray({ min: 1 })
@@ -242,7 +242,20 @@ const validateOrder = [
   body('paymentInfo.method')
     .optional()
     .isIn(['cash_on_delivery', 'esewa', 'khalti', 'bank_transfer', 'card'])
-    .withMessage('Invalid payment method')
+    .withMessage('Invalid payment method'),
+    
+  // Validation middleware function
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Validation failed',
+        errors: errors.array()
+      });
+    }
+    next();
+  }
 ];
 
 module.exports = {

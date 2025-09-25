@@ -127,6 +127,26 @@ app.post('/api/feedback', async (req, res) => {
   }
 });
 
+// Test endpoint for orders (add this before your routes)
+app.post('/api/debug/order', async (req, res) => {
+  try {
+    console.log('DEBUG Order received:', req.body);
+    
+    // Simulate success
+    res.json({
+      success: true,
+      message: 'Debug order successful!',
+      receivedData: req.body
+    });
+  } catch (error) {
+    console.error('Debug error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Debug failed: ' + error.message
+    });
+  }
+});
+
 // Routes
 app.get("/", (req, res) => {
   res.json({

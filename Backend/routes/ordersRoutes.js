@@ -10,7 +10,8 @@ const {
   cancelOrder,
   getAllOrders,
   getOrderStats,
-  getFarmerOrders
+  getFarmerOrders,
+  updateOrderStatusAdmin
 } = require('../controllers/orderController');
 
 const { protect, adminOnly, farmerOnly } = require('../middleware/auth');
@@ -20,22 +21,22 @@ const { validateOrder } = require('../middleware/validation');
 router.use(protect);
 
 // User routes
-router.post('/', validateOrder, createOrder);
+router.post('/', validateOrder, createOrder); // ✅ FIXED: Single middleware array
 router.get('/', getMyOrders);
 router.get('/:id', getOrder);
 router.put('/:id/cancel', cancelOrder);
 
-// ✅ NEW ORDER HISTORY ROUTES
-router.post('/place-order', placeOrder);
+// ✅ ORDER HISTORY ROUTES (New system - uses different validation)
+router.post('/place-order', placeOrder); // Uses custom validation in controller
 router.get('/history/:userId', getOrderHistory);
 
-// ✅ FARMER ROUTES (Updated)
-router.get('/farmer/orders', farmerOnly, getFarmerOrders); // Get farmer's orders
-router.put('/farmer/update-status/:orderId', farmerOnly, updateOrderStatus); // Farmer updates status
+// ✅ FARMER ROUTES
+router.get('/farmer/orders', farmerOnly, getFarmerOrders);
+router.put('/farmer/update-status/:orderId', farmerOnly, updateOrderStatus);
 
 // ✅ ADMIN ROUTES
 router.get('/admin/all', adminOnly, getAllOrders);
 router.get('/admin/stats', adminOnly, getOrderStats);
-router.put('/admin/update-status/:id', adminOnly, updateOrderStatus); // Admin updates status
+router.put('/admin/update-status/:id', adminOnly, updateOrderStatusAdmin);
 
 module.exports = router;

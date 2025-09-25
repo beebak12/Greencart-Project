@@ -4,21 +4,61 @@ const Cart = require('../models/Cart.models');
 const Product = require('../models/Product.models');
 const OrderHistory = require('../models/OrderHistory');
 
-// ✅ PLACE ORDER FUNCTION (for new order history system)
+// ✅ FIXED PLACE ORDER FUNCTION (MAIN ISSUE)
 const placeOrder = async (req, res) => {
   try {
+    console.log('🔔 Place order request received:', req.body);
+    
     const { items, totalAmount, shippingAddress, paymentMethod } = req.body;
     const customer = req.user;
 
-    // Create farmer notifications
+    // ✅ VALIDATION: Check if user is authenticated
+    if (!customer || !customer.id) {
+      return res.status(401).json({
+        success: false,
+        message: 'User not authenticated'
+      });
+    }
+
+    // ✅ VALIDATION: Check required fields
+    if (!items || !Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Order items are required'
+      });
+    }
+
+    if (!totalAmount || totalAmount <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Valid total amount is required'
+      });
+    }
+
+    if (!shippingAddress || !shippingAddress.fullName || !shippingAddress.address) {
+      return res.status(400).json({
+        success: false,
+        message: 'Complete shipping address is required'
+      });
+    }
+
+       // ✅ CREATE FARMER NOTIFICATIONS
     const farmerNotifications = [];
     const uniqueFarmers = new Map();
 
     for (let item of items) {
-      if (!uniqueFarmers.has(item.farmerId)) {
-        uniqueFarmers.set(item.farmerId, {
+      // ✅ FIX: Check if farmer information exists
+      if (!item.farmerId) {
+        return res.status(400).json({
+          success: false,
+          message: 'Farmer ID is required for each item'
+        });
+      }
+
+      if (!uniqueFarmers.has(item.farmerId.toString())) {
+        uniqueFarmers.set(item.farmerId.toString(), {
           farmerId: item.farmerId,
-          farmerName: item.farmerName,
+          farmerName: item.farmerName || 'Unknown Farmer', // ✅ FIX: Default value
           notified: false,
           notificationDate: null,
           status: 'pending'
@@ -28,34 +68,94 @@ const placeOrder = async (req, res) => {
 
     farmerNotifications.push(...uniqueFarmers.values());
 
-    // Create order history
-    const order = new OrderHistory({
+   // ✅ FIXED: Create order history with proper field mapping
+    const orderData = {
       customer: {
         userId: customer._id || customer.id,
-        name: customer.name,
-        email: customer.email,
-        phone: customer.phone
+        name: customer.name || shippingAddress.fullName,
+        email: customer.email || 'customer@example.com',
+        phone: customer.phone || shippingAddress.phone || 'Not provided'
       },
-      items: items,
+      items: items.map(item => ({
+        productId: item.productId || item._id, // ✅ FIX: Handle both productId and _id
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+        image: item.image || '',
+        farmerId: item.farmerId,
+        farmerName: item.farmerName || 'Unknown Farmer',
+        farmerEmail: item.farmerEmail || 'farmer@example.com'
+      })),
       totalAmount: totalAmount,
-      shippingAddress: shippingAddress,
-      paymentMethod: paymentMethod,
+      shippingAddress: {
+        fullName: shippingAddress.fullName,
+        address: shippingAddress.address,
+        city: shippingAddress.city || 'Unknown City',
+        state: shippingAddress.state || 'Unknown State',
+        postalCode: shippingAddress.postalCode || '00000',
+        country: shippingAddress.country || 'Unknown Country',
+        phone: shippingAddress.phone || 'Not provided'
+      },
+      paymentMethod: paymentMethod || 'cash_on_delivery',
       farmerNotifications: farmerNotifications
-    });
+    };
 
-    // Save order
+    console.log('📦 Order data being saved:', orderData);
+
+    // ✅ CREATE AND SAVE ORDER
+    const order = new OrderHistory(orderData);
     const savedOrder = await order.save();
 
-    // Notify farmers
-    await sendFarmerNotifications(savedOrder);
+    console.log('✅ Order saved successfully:', savedOrder.orderId);
 
+    // ✅ NOTIFY FARMERS (async - don't wait for completion)
+    sendFarmerNotifications(savedOrder).catch(error => {
+      console.error('❌ Farmer notification error:', error);
+    });
+
+    // ✅ CLEAR USER'S CART (if exists)
+    try {
+      const cart = await Cart.findOne({ user: customer._id || customer.id });
+      if (cart) {
+        cart.items = [];
+        await cart.save();
+        console.log('🛒 Cart cleared successfully');
+      }
+    } catch (cartError) {
+      console.log('⚠️ Cart clearing failed:', cartError.message);
+    }
+
+    // ✅ SUCCESS RESPONSE
     res.status(201).json({
       success: true,
       message: 'Order placed successfully!',
-      order: savedOrder
+      order: {
+        orderId: savedOrder.orderId,
+        totalAmount: savedOrder.totalAmount,
+        status: savedOrder.orderStatus,
+        orderDate: savedOrder.orderDate,
+        items: savedOrder.items
+      }
     });
+
   } catch (error) {
-    console.error('Place order error:', error);
+    console.error('❌ Place order error:', error);
+    
+    // ✅ SPECIFIC ERROR HANDLING
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({
+        success: false,
+        message: 'Validation error: ' + Object.values(error.errors).map(e => e.message).join(', ')
+      });
+    }
+    
+    if (error.code === 11000) {
+      return res.status(400).json({
+        success: false,
+        message: 'Order ID already exists'
+      });
+    }
+
     res.status(500).json({
       success: false,
       message: 'Error placing order: ' + error.message
@@ -63,33 +163,38 @@ const placeOrder = async (req, res) => {
   }
 };
 
-// ✅ GET ORDER HISTORY FUNCTION
+// ✅ FIXED GET ORDER HISTORY FUNCTION
 const getOrderHistory = async (req, res) => {
   try {
     const userId = req.params.userId || req.user.id;
     
+    console.log('📋 Fetching order history for user:', userId);
+
     const orders = await OrderHistory.find({ 'customer.userId': userId })
       .sort({ orderDate: -1 });
 
     res.status(200).json({
       success: true,
+      count: orders.length,
       orders: orders
     });
 
   } catch (error) {
-    console.error('Error fetching order history:', error);
+    console.error('❌ Error fetching order history:', error);
     res.status(500).json({ 
       success: false, 
-      message: 'Error fetching order history' 
+      message: 'Error fetching order history: ' + error.message
     });
   }
 };
 
-// ✅ UPDATE ORDER STATUS BY FARMER
+// ✅ FIXED UPDATE ORDER STATUS FUNCTION
 const updateOrderStatus = async (req, res) => {
   try {
     const { orderId } = req.params;
-    const { itemId, status } = req.body;
+    const { itemId, status, farmerId } = req.body;
+
+    console.log('🔄 Updating order status:', { orderId, itemId, status, farmerId });
 
     const order = await OrderHistory.findById(orderId);
     if (!order) {
@@ -99,17 +204,47 @@ const updateOrderStatus = async (req, res) => {
       });
     }
 
-    // Update specific item status
-    const item = order.items.id(itemId);
-    if (item) {
-      // Update farmer notification status
-      const farmerNotification = order.farmerNotifications.find(
-        notif => notif.farmerId.toString() === item.farmerId.toString()
+    let updated = false;
+
+    // ✅ UPDATE FARMER NOTIFICATION STATUS
+    if (farmerId) {
+      const notification = order.farmerNotifications.find(
+        notif => notif.farmerId.toString() === farmerId.toString()
       );
       
-      if (farmerNotification) {
-        farmerNotification.status = status;
-        farmerNotification.notificationDate = new Date();
+      if (notification) {
+        notification.status = status;
+        notification.notificationDate = new Date();
+        notification.notified = true;
+        updated = true;
+      }
+    }
+
+ // ✅ UPDATE SPECIFIC ITEM STATUS
+    if (itemId) {
+      const item = order.items.id(itemId);
+      if (item) {
+        // Item-specific updates can go here
+        console.log('📦 Item status updated:', item.name);
+        updated = true;
+      }
+    }
+
+    // ✅ UPDATE OVERALL ORDER STATUS BASED ON FARMER NOTIFICATIONS
+    if (updated) {
+      const allCompleted = order.farmerNotifications.every(notif => 
+        ['completed', 'accepted'].includes(notif.status)
+      );
+      const anyCancelled = order.farmerNotifications.some(notif => 
+        ['cancelled', 'rejected'].includes(notif.status)
+      );
+
+      if (anyCancelled) {
+        order.orderStatus = 'cancelled';
+      } else if (allCompleted) {
+        order.orderStatus = 'completed';
+      } else {
+        order.orderStatus = 'processing';
       }
 
       order.lastUpdated = new Date();
@@ -121,21 +256,49 @@ const updateOrderStatus = async (req, res) => {
         order: order
       });
     } else {
-      res.status(404).json({
+      res.status(400).json({
         success: false,
-        message: 'Item not found in order'
+        message: 'No changes made to order status'
       });
     }
 
   } catch (error) {
-    console.error('Error updating order status:', error);
+    console.error('❌ Error updating order status:', error);
     res.status(500).json({ 
       success: false, 
-      message: 'Error updating order status' 
+      message: 'Error updating order status: ' + error.message
     });
   }
 };
 
+// ✅ IMPROVED HELPER FUNCTION: Send farmer notifications
+const sendFarmerNotifications = async (order) => {
+  try {
+    console.log('📧 Sending notifications to farmers for order:', order.orderId);
+    
+    for (let notification of order.farmerNotifications) {
+      const farmerItems = order.items.filter(item => 
+        item.farmerId.toString() === notification.farmerId.toString()
+      );
+      
+      console.log(`👨‍🌾 Notifying farmer: ${notification.farmerName}`);
+      console.log(`📦 Items: ${farmerItems.map(item => 
+        `${item.name} (x${item.quantity}) - $${item.price * item.quantity}`
+      ).join(', ')}`);
+      
+      notification.notified = true;
+      notification.notificationDate = new Date();
+    }
+
+    await order.save();
+    console.log('✅ All farmers notified successfully');
+    
+  } catch (error) {
+    console.error('❌ Error sending farmer notifications:', error);
+    // Don't throw error - notifications shouldn't block order placement
+  }
+};
+   
 // ✅ CREATE ORDER (Original function)
 const createOrder = async (req, res) => {
   try {
@@ -547,25 +710,7 @@ const getFarmerOrders = async (req, res) => {
   }
 };
 
-// ✅ HELPER FUNCTION: Send farmer notifications
-const sendFarmerNotifications = async (order) => {
-  try {
-    order.farmerNotifications.forEach(async (notification) => {
-      console.log(`📧 Notification sent to farmer: ${notification.farmerName}`);
-      console.log(`📦 Order Details: ${order.items.filter(item => 
-        item.farmerId.toString() === notification.farmerId.toString()
-      ).map(item => item.name).join(', ')}`);
-      
-      notification.notified = true;
-      notification.notificationDate = new Date();
-    });
-
-    await order.save();
-    
-  } catch (error) {
-    console.error('Error sending farmer notifications:', error);
-  }
-};
+// (Duplicate sendFarmerNotifications function removed to fix redeclaration error)
 
 // ✅ HELPER FUNCTION: Update overall order status
 const updateOverallOrderStatus = async (order) => {

@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import { SearchProvider } from './context/SearchContext';
 import { CartProvider } from './context/CartContext';
+import 'react-toastify/dist/ReactToastify.css';
 
 import Landing from './pages/Landing.js';
 import Footer from './components/common/Footer';
@@ -32,6 +33,7 @@ import Farmerdashboard from './pages/Farmerdashboard.js';
 
 import OrderHistory from './pages/Orderhistory.js';
 import './App.css';
+import { ToastContainer } from 'react-toastify';
 
 
 
@@ -75,10 +77,12 @@ function App() {
 </Routes>
     </main>
     <Footer />
+     <ToastContainer />
     </div>
     </Router>
     </SearchProvider>
     </CartProvider>
+    
   );
 }
 
