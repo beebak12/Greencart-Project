@@ -48,6 +48,14 @@ const sendTokenResponse = (user, statusCode, res) => {
   if (process.env.NODE_ENV === 'production') {
     options.secure = true;
   }
+  
+  // Safe user data extraction
+  const userData = {
+    id: user._id,
+    name: user.name,
+    email: user.email
+    // Add other fields you need
+  };
 
   res
     .status(statusCode)

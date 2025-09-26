@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const authReset = require('./routes/authReset');
+const authResetRoutes = require('./routes/authReset');
 
 const cors = require("cors");
 const nodemailer = require("nodemailer");
@@ -10,10 +11,13 @@ const connectDB = require("./config/db"); // adjust path
 const authRoutes = require("./routes/authRoutes");
 
 require("dotenv").config();
+connectDB();
 
 const app = express();
+app.use(express.json())
 
 // Middleware (order is important!)
+app.use('/api/auth', authRoutes);
 app.use('/api/auth', authReset);
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: false }));
@@ -176,6 +180,7 @@ app.use('/api/products', require('./routes/productsRoutes'));
 app.use('/api/cart', require('./routes/cartRoutes'));
 app.use('/api/orders', require('./routes/ordersRoutes')); // ✅ ONLY ONCE
 app.use('/api/farmers', require('./routes/farmersRoutes'));
+app.use('/api/auth', authResetRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
@@ -215,7 +220,6 @@ process.on('SIGTERM', () => {
 
 // Start server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
+app.listen(PORT, () => {console.log(`🚀 Server running on port ${PORT}`);
   console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
 });

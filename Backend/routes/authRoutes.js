@@ -1,4 +1,8 @@
 const express = require('express');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const nodemailer = require('nodemailer');
+
 const {
   register,
   login,
@@ -6,9 +10,12 @@ const {
   updateProfile,
   changePassword,
   refreshToken,
-  logout
+  logout,
+  customerSignup,
+  customerLogin,
+  farmerSignup,
+  farmerLogin
 } = require('../controllers/authController');
-const { customerSignup, customerLogin, farmerSignup, farmerLogin } = require('../controllers/authController');
 
 const { protect } = require('../middleware/auth');
 const {
@@ -18,35 +25,25 @@ const {
   validatePasswordChange
 } = require('../middleware/validation');
 
+const User = require("../models/user.models");
+
 const router = express.Router();
 
+// ============================
 // Public routes
+// ============================
 router.post('/register', validateRegister, register);
 router.post('/login', validateLogin, login);
 router.post('/refresh', refreshToken);
 
-// Role-specific public routes for app compatibility
+// Role-specific routes
 router.post('/customer/signup', customerSignup);
 router.post('/customer/login', customerLogin);
 router.post('/farmer/signup', farmerSignup);
 router.post('/farmer/login', farmerLogin);
 
-// Protected routes
-router.use(protect); // All routes after this middleware are protected
-
-router.get('/me', getMe);
-router.put('/profile', validateProfileUpdate, updateProfile);
-router.put('/password', validatePasswordChange, changePassword);
-router.post('/logout', logout);
-
-
-
-
-const User = require("../models/user.models"); // adjust path if needed
-const nodemailer = require("nodemailer");
-
 // ============================
-// Forgot Password Route
+// Forgot Password (secure way)
 // ============================
 router.post("/forgot-password", async (req, res) => {
   try {
@@ -58,7 +55,13 @@ router.post("/forgot-password", async (req, res) => {
       return res.status(404).json({ success: false, message: "Email not found" });
     }
 
-    // 2. Setup nodemailer transporter
+    // 2. Generate reset token
+    const resetToken = user.getResetPasswordToken();
+    await user.save({ validateBeforeSave: false });
+
+    // 3. Send reset email
+    const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
+
     const transporter = nodemailer.createTransport({
       host: process.env.EMAIL_HOST,
       port: process.env.EMAIL_PORT,
@@ -69,24 +72,29 @@ router.post("/forgot-password", async (req, res) => {
       },
     });
 
-    // 3. Email content (sending original password — as per your request)
     const mailOptions = {
       from: process.env.EMAIL_FROM,
       to: email,
-      subject: "Your Greencart Account Password",
-      text: `Hello ${user.name},\n\nYour password is: ${user.password}\n\nPlease keep it safe.`,
+      subject: "Password Reset Request",
+      text: `Hi ${user.name},\n\nPlease click the link below to reset your password:\n${resetUrl}\n\nIf you did not request this, please ignore.`,
     };
 
-    // 4. Send email
     await transporter.sendMail(mailOptions);
 
-    return res.json({ success: true, message: "Password sent to your email!" });
+    return res.json({ success: true, message: "Password reset link sent to email!" });
   } catch (error) {
     console.error("Forgot password error:", error);
     res.status(500).json({ success: false, message: "Something went wrong" });
   }
 });
 
+// ============================
+// Protected routes
+// ============================
+router.use(protect);
+router.get('/me', getMe);
+router.put('/profile', validateProfileUpdate, updateProfile);
+router.put('/password', validatePasswordChange, changePassword);
+router.post('/logout', logout);
+
 module.exports = router;
-
-
