@@ -42,7 +42,7 @@ router.post('/logout', logout);
 
 
 
-const User = require("../models/User"); // adjust path if needed
+const User = require("../models/user.models"); // adjust path if needed
 const nodemailer = require("nodemailer");
 
 // ============================
