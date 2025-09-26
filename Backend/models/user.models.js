@@ -25,6 +25,16 @@ const userSchema = new mongoose.Schema({
   timestamps: true 
 });
 
+// Add this to your userSchema methods (around line 30)
+userSchema.methods.getPublicProfile = function() {
+  return {
+    id: this._id,
+    name: this.name,
+    email: this.email,
+    role: this.role,
+    createdAt: this.createdAt
+  };
+};
 // Hash password before save
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();

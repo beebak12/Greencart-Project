@@ -50,24 +50,20 @@ const sendTokenResponse = (user, statusCode, res) => {
   }
   
   // Safe user data extraction
-  const userData = {
+ const userData = {
     id: user._id,
     name: user.name,
-    email: user.email
-    // Add other fields you need
+    email: user.email,
+    role: user.role
   };
 
-  res
-    .status(statusCode)
-    .cookie('token', token, options)
-    .json({
-      success: true,
-      token,
-      refreshToken,
-      user: user.getPublicProfile()
-    });
+  res.status(statusCode).json({
+    success: true,
+    token,
+    refreshToken,
+    user: userData
+  });
 };
-
 // Extract token from request
 const extractTokenFromHeader = (req) => {
   const authHeader = req.headers.authorization;
